@@ -1,33 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORS Proxy Example</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORS Proxy Example</title>
 </head>
 <body>
 
-    <h1>Testing CORS Proxy</h1>
-    <button id="fetchButton">Fetch Data</button>
-    <pre id="responseData"></pre>
+  <h1>Testing CORS Proxy with XML Response</h1>
+  <button id="fetchButton">Fetch Data</button>
 
-    <script>
-        const proxyUrl = 'http://localhost:8082/proxy'; // Proxy server
-        const targetUrl = 'https://certinia.com/wp-json/oembed/1.0/embed'; // Target URL
+  <div id="responseContainer"></div> <!-- To display the response -->
 
-        document.getElementById('fetchButton').addEventListener('click', function() {
-            fetch(proxyUrl + '?url=' + encodeURIComponent(targetUrl))
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Response Data:', data);
-                    document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('responseData').textContent = 'Error: ' + error.message;
-                });
+  <script>
+    // Client-side script to call the proxy server
+    const targetUrl = 'https://certinia.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcertinia.com%2Fapac%2F&format=xml';
+
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      fetch('http://localhost:8082/proxy?url=' + encodeURIComponent(targetUrl))
+        .then(response => response.text()) // Use text() instead of json() for XML response
+        .then(data => {
+          console.log('Response Data:', data);
+          
+          // Display the raw XML data on the page
+          const responseContainer = document.getElementById('responseContainer');
+          responseContainer.textContent = data; // Shows raw XML as text
+          
+          // Optionally, if you want to parse and format the XML data:
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(data, "application/xml");
+
+          // For example, display the title from the XML response (if applicable)
+          const title = xmlDoc.getElementsByTagName("title")[0].textContent;
+          responseContainer.innerHTML += `<h2>Title from XML: ${title}</h2>`;
+        })
+        .catch(error => {
+          console.error('Error:', error);
         });
-    </script>
+    });
+  </script>
 
 </body>
 </html>
