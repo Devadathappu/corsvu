@@ -9,20 +9,30 @@
 
   <h1>Testing CORS Proxy</h1>
   <button id="fetchButton">Fetch Data</button>
-  <pre id="responseData"></pre> <!-- To display the fetched data -->
+  <pre id="responseData"></pre>
 
   <script>
-    // Client-side script to call the proxy server
-    const proxyUrl = 'http://localhost:8082'; // Proxy server running on localhost:8082
+    const proxyUrl = 'http://localhost:8082/proxy';
     const targetUrl = 'https://certinia.com/cdn-cgi/rum?';
+    
+    // Prepare the data to send in the POST request
+    const postData = {
+      // Add any required data here, for example:
+      key1: 'value1',
+      key2: 'value2'
+    };
 
     document.getElementById('fetchButton').addEventListener('click', function() {
-      // Fetch data via the proxy server
-      fetch(proxyUrl + '/' + targetUrl)
-        .then(response => response.json())  // Assuming the response is JSON
+      fetch(proxyUrl, {
+        method: 'POST',  // Use POST method
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)  // Send POST data
+      })
+        .then(response => response.json())  // Parse the JSON response
         .then(data => {
           console.log('Response Data:', data);
-          // Display the fetched data on the page
           document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
         })
         .catch(error => {
