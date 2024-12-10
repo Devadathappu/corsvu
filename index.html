@@ -11,9 +11,22 @@
   <button id="fetchButton">Fetch Data</button>
   <pre id="responseData"></pre> <!-- To display the fetched data -->
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORS Proxy Example</title>
+</head>
+<body>
+
+  <h1>Testing CORS Proxy</h1>
+  <button id="fetchButton">Fetch Data</button>
+  <pre id="responseData"></pre> <!-- To display the fetched data -->
+
   <script>
     // Client-side script to call the proxy server
-    const proxyUrl = 'http://localhost:8080/';
+    const proxyUrl = 'http://localhost:8082/';
     const targetUrl = 'https://certinia.com/cdn-cgi/rum?';
 
     document.getElementById('fetchButton').addEventListener('click', function() {
@@ -42,6 +55,9 @@
         });
     });
   </script>
+
+</body>
+</html>
 
 </body>
 </html>
