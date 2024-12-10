@@ -1,53 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CORS Proxy Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Proxy Example</title>
 </head>
 <body>
 
-  <h1>Testing CORS Proxy</h1>
-  <button id="fetchButton">Fetch Data</button>
-  <pre id="responseData"></pre>
+    <h1>Testing CORS Proxy</h1>
+    <button id="fetchButton">Fetch Data</button>
+    <pre id="responseData"></pre>
 
-  <script>
-    const proxyUrl = 'http://localhost:8082/proxy';
-    const targetUrl = 'https://certinia.com/cdn-cgi/rum?';
-    
-    // Prepare the data to send in the POST request
-    const postData = {
-      // Add any required data here
-      key1: 'value1',
-      key2: 'value2'
-    };
+    <script>
+        const proxyUrl = 'http://localhost:8082/proxy'; // Proxy server
+        const targetUrl = 'https://certinia.com/wp-json/oembed/1.0/embed'; // Target URL
 
-    document.getElementById('fetchButton').addEventListener('click', function() {
-      fetch(proxyUrl, {
-        method: 'POST',  // Use POST method
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(postData)  // Send POST data
-      })
-        .then(response => {
-          return response.json();  // Parse the JSON response
-        })
-        .then(data => {
-          if (data && Object.keys(data).length > 0) {
-            console.log('Response Data:', data);
-            document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
-          } else {
-            console.log('No data returned.');
-            document.getElementById('responseData').textContent = 'No data returned.';
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          document.getElementById('responseData').textContent = 'Error: ' + error.message;
+        document.getElementById('fetchButton').addEventListener('click', function() {
+            fetch(proxyUrl + '?url=' + encodeURIComponent(targetUrl))
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response Data:', data);
+                    document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('responseData').textContent = 'Error: ' + error.message;
+                });
         });
-    });
-  </script>
+    </script>
 
 </body>
 </html>
