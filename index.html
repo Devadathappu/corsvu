@@ -23,18 +23,29 @@
 
     document.getElementById('fetchButton').addEventListener('click', function() {
       fetch(proxyUrl + targetUrl)
-        .then(response => response.json()) // Assuming JSON response
-        .then(data => {
-          console.log('Response Data:', data);
-          
-          // Display the data on the page
-          const responseData = document.getElementById('responseData');
-          responseData.textContent = JSON.stringify(data, null, 2); // Format the JSON data
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    });
+  .then(response => response.text()) // Get the response as plain text first
+  .then(data => {
+    console.log('Raw Response Data:', data); // Log the raw response to inspect it
+    
+    try {
+      const jsonData = JSON.parse(data); // Attempt to parse as JSON
+      console.log('Parsed JSON Data:', jsonData);
+      
+      // Display the data on the page
+      const responseData = document.getElementById('responseData');
+      responseData.textContent = JSON.stringify(jsonData, null, 2); // Display formatted JSON
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      const responseData = document.getElementById('responseData');
+      responseData.textContent = 'Error parsing JSON: ' + error.message;
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    const responseData = document.getElementById('responseData');
+    responseData.textContent = 'Fetch error: ' + error.message;
+  });
+
   </script>
 
 </body>
