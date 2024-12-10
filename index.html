@@ -9,44 +9,40 @@
 
   <h1>Testing CORS Proxy</h1>
   <button id="fetchButton">Fetch Data</button>
-  
-  <!-- Section to display the data -->
-  <div id="output">
-    <h2>Response Data:</h2>
-    <pre id="responseData"></pre>
-  </div>
+  <pre id="responseData"></pre> <!-- To display the fetched data -->
 
   <script>
     // Client-side script to call the proxy server
-    const proxyUrl = 'http://localhost:8082/';
+    const proxyUrl = 'http://localhost:8080/';
     const targetUrl = 'https://certinia.com/cdn-cgi/rum?';
 
     document.getElementById('fetchButton').addEventListener('click', function() {
       fetch(proxyUrl + targetUrl)
-  .then(response => response.text()) // Get the response as plain text first
-  .then(data => {
-    console.log('Raw Response Data:', data); // Log the raw response to inspect it
-    
-    try {
-      const jsonData = JSON.parse(data); // Attempt to parse as JSON
-      console.log('Parsed JSON Data:', jsonData);
-      
-      // Display the data on the page
-      const responseData = document.getElementById('responseData');
-      responseData.textContent = JSON.stringify(jsonData, null, 2); // Display formatted JSON
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-      const responseData = document.getElementById('responseData');
-      responseData.textContent = 'Error parsing JSON: ' + error.message;
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    const responseData = document.getElementById('responseData');
-    responseData.textContent = 'Fetch error: ' + error.message;
-  });
-
+        .then(response => response.text()) // Get the response as plain text first
+        .then(data => {
+          console.log('Raw Response Data:', data); // Log the raw response to inspect it
+          
+          try {
+            const jsonData = JSON.parse(data); // Attempt to parse as JSON
+            console.log('Parsed JSON Data:', jsonData);
+            
+            // Display the data on the page
+            const responseData = document.getElementById('responseData');
+            responseData.textContent = JSON.stringify(jsonData, null, 2); // Display formatted JSON
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+            const responseData = document.getElementById('responseData');
+            responseData.textContent = 'Error parsing JSON: ' + error.message;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const responseData = document.getElementById('responseData');
+          responseData.textContent = 'Fetch error: ' + error.message;
+        });
+    });
   </script>
 
 </body>
 </html>
+
