@@ -17,7 +17,7 @@
     
     // Prepare the data to send in the POST request
     const postData = {
-      // Add any required data here, for example:
+      // Add any required data here
       key1: 'value1',
       key2: 'value2'
     };
@@ -30,10 +30,17 @@
         },
         body: JSON.stringify(postData)  // Send POST data
       })
-        .then(response => response.json())  // Parse the JSON response
+        .then(response => {
+          return response.json();  // Parse the JSON response
+        })
         .then(data => {
-          console.log('Response Data:', data);
-          document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
+          if (data && Object.keys(data).length > 0) {
+            console.log('Response Data:', data);
+            document.getElementById('responseData').textContent = JSON.stringify(data, null, 2);
+          } else {
+            console.log('No data returned.');
+            document.getElementById('responseData').textContent = 'No data returned.';
+          }
         })
         .catch(error => {
           console.error('Error:', error);
