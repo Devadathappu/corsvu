@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CORS Proxy Example</title>
+  <title>CORS Proxy Test</title>
 </head>
 <body>
 
@@ -17,11 +17,73 @@
     const targetUrl = 'https://certinia.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcertinia.com%2Fapac%2F&format=xml';
 
     document.getElementById('fetchButton').addEventListener('click', function() {
-      fetch('http://localhost:8082/proxy?url=' + encodeURIComponent(targetUrl))
-        .then(response => response.text()) // Use text() instead of json() for XML response
+      // Step 1: Test Preflight (OPTIONS request)
+      checkPreflightRequest(targetUrl);
+
+      // Step 2: Attempt to fetch the data
+      fetchDataFromProxy(targetUrl);
+    });
+
+    /**
+     * Sends an OPTIONS request to check for CORS preflight issues.
+     * This helps identify if the server allows the request method.
+     */
+    function checkPreflightRequest(url) {
+      console.log('%c[INFO] Sending Preflight OPTIONS Request...', 'color: blue');
+      
+      fetch(url, {
+        method: 'OPTIONS',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Request-Method': 'GET'
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log('%c[SUCCESS] Preflight Request Successful', 'color: green');
+          return response.headers;
+        } else {
+          throw new Error(`Preflight failed with status: ${response.status}`);
+        }
+      })
+      .then(headers => {
+        console.log('%c[INFO] Preflight Response Headers:', 'color: blue', Array.from(headers.entries()));
+      })
+      .catch(error => {
+        console.error('%c[ERROR] Preflight Request Failed:', 'color: red', error);
+      });
+    }
+
+    /**
+     * Attempts to fetch data from the proxy.
+     * This function will display the CORS headers and response details.
+     */
+    function fetchDataFromProxy(url) {
+      console.log('%c[INFO] Fetching Data From Proxy...', 'color: blue');
+      
+      fetch('http://localhost:8082/proxy?url=' + encodeURIComponent(url))
+        .then(response => {
+          console.log('%c[INFO] Response Status:', 'color: blue', response.status);
+          console.log('%c[INFO] Response Headers:', 'color: blue', Array.from(response.headers.entries()));
+
+          if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+          }
+
+          // Check for CORS issues
+          const corsHeader = response.headers.get('Access-Control-Allow-Origin');
+          if (!corsHeader) {
+            console.warn('%c[WARNING] No CORS header found in response. Possible CORS issue.', 'color: orange');
+          } else {
+            console.log('%c[INFO] Access-Control-Allow-Origin:', 'color: blue', corsHeader);
+          }
+
+          return response.text(); // Use text() instead of json() for XML response
+        })
         .then(data => {
-          console.log('Response Data:', data);
-          
+          console.log('%c[INFO] Response Data:', 'color: blue', data);
+
           // Display the raw XML data on the page
           const responseContainer = document.getElementById('responseContainer');
           responseContainer.textContent = data; // Shows raw XML as text
@@ -31,13 +93,21 @@
           const xmlDoc = parser.parseFromString(data, "application/xml");
 
           // For example, display the title from the XML response (if applicable)
-          const title = xmlDoc.getElementsByTagName("title")[0].textContent;
-          responseContainer.innerHTML += `<h2>Title from XML: ${title}</h2>`;
+          const titleTag = xmlDoc.getElementsByTagName("title")[0];
+          if (titleTag) {
+            const title = titleTag.textContent;
+            responseContainer.innerHTML += `<h2>Title from XML: ${title}</h2>`;
+          } else {
+            responseContainer.innerHTML += `<h2>No title tag found in XML response</h2>`;
+          }
         })
         .catch(error => {
-          console.error('Error:', error);
+          console.error('%c[ERROR] Fetch Failed:', 'color: red', error);
+          const responseContainer = document.getElementById('responseContainer');
+          responseContainer.innerHTML = `<h2 style="color:red;">Error fetching data: ${error.message}</h2>`;
         });
-    });
+    }
+
   </script>
 
 </body>
