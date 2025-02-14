@@ -1,34 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>CORS PoC</title>
-  </head>
-  <body>
-    <script>
-      // Attempt a cross-origin GET request to the favorites endpoint
-      fetch("https://www.booztlet.com/eu/en/api/me/favorites", {
-        method: "GET",
-        // Include credentials (cookies) in the request
-        credentials: "include",
-        // You can set simple headers. Many headers (like User-Agent or Cookie) are managed by the browser.
-        headers: {
-          "Accept": "application/json, text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-        }
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok: " + response.statusText);
-        }
-        // Assuming the response is JSON. Change as needed.
-        return response.json();
-      })
-      .then(data => {
-        console.log("Response data:", data);
-      })
-      .catch(error => {
-        console.error("Fetch error:", error);
-      });
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CORS Proxy Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background: #f9f9f9;
+    }
+    pre {
+      background: #eaeaea;
+      padding: 1em;
+      border: 1px solid #ccc;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Favorites Data</h1>
+  <pre id="output">Loading data...</pre>
+
+  <script>
+    // Fetch the favorites data from the proxy endpoint.
+    fetch('http://localhost:3000/proxy/favorites', {
+      method: 'GET',
+      // Include credentials if your proxy needs to pass cookies along.
+      credentials: 'include'
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+      }
+      // Assuming the response is JSON
+      return response.json();
+    })
+    .then(data => {
+      // Display the data in the pre element.
+      document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+    })
+    .catch(error => {
+      // Show error message on failure.
+      document.getElementById('output').textContent = 'Fetch error: ' + error;
+      console.error('Fetch error:', error);
+    });
+  </script>
+</body>
 </html>
