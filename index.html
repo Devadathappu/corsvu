@@ -26,7 +26,7 @@
     // Fetch the favorites data from the proxy endpoint.
     fetch('http://localhost:3000/proxy/favorites', {
       method: 'GET',
-      // Include credentials if your proxy needs to pass cookies along.
+      // Include credentials if needed (e.g., if cookies must be forwarded)
       credentials: 'include'
     })
     .then(response => {
